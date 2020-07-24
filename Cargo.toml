@@ -1,0 +1,13 @@
+[package]
+name = "gato-simple-router"
+version = "0.1.0"
+authors = ["Pedro Soares <contato@pedrosoares.net>"]
+edition = "2018"
+description = "Apache CGI Driver for Gato Web Framework"
+license = "MIT"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+gato-core = "0.1.0"
+serde_json = "1.0"
