@@ -1,4 +1,4 @@
-use gato_core::kernel::{Router, Request, Response, Logger};
+use gato_core::kernel::{Router, Request, Response, Logger, RequestBuilder};
 use std::collections::HashMap;
 
 struct Endpoint {
@@ -47,7 +47,7 @@ impl SimpleRouter {
 }
 
 impl SimpleRouter {
-    fn match_route_name(&self, uri: &str, router: &str, request: &mut Request) -> bool {
+    fn match_route_name(&self, uri: &str, router: &str, request_builder: &mut RequestBuilder) -> bool {
         if uri == router {
             return true;
         }
@@ -74,7 +74,7 @@ impl SimpleRouter {
         }
 
         if uri_piece.len() == route_piece.len() {
-            request.add_params(params);
+            request_builder.add_params(params);
             return true;
         }
 
@@ -86,17 +86,19 @@ impl Router for SimpleRouter {
     fn boot(&self) -> () {
         Logger::info("SimpleRouter[boot]");
     }
-    fn handle(&self, request: &mut Request) -> Response {
+    fn handle(&self, request_builder: &mut RequestBuilder) -> Response {
         Logger::info("SimpleRouter[handle]");
 
         let endpoints = unsafe { ENDPOINTS.iter() };
+        let request = request_builder.get_request();
 
         for endpoint in endpoints {
             let did_match_route : bool = self.match_route_name(
-                endpoint.uri.as_str(), request.get_uri().as_str(), request
+                endpoint.uri.as_str(), request.get_uri().as_str(), request_builder
             );
             if did_match_route && endpoint.method == request.get_method() {
-                return (endpoint.handler)(request);
+                let request = request_builder.get_request();
+                return (endpoint.handler)(&request);
             }
         }
 
