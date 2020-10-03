@@ -97,8 +97,8 @@ impl Router for SimpleRouter {
                 endpoint.uri.as_str(), request.get_uri().as_str(), request_builder
             );
             if did_match_route && endpoint.method == request.get_method() {
-                let request = request_builder.get_request();
-                return (endpoint.handler)(&request);
+                let mut request = request_builder.get_request();
+                return (endpoint.handler)(&mut request);
             }
         }
 
