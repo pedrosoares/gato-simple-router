@@ -1,6 +1,6 @@
 [package]
 name = "gato-simple-router"
-version = "0.4.2"
+version = "0.4.3"
 authors = ["Pedro Soares <contato@pedrosoares.net>"]
 edition = "2018"
 description = "Apache CGI Driver for Gato Web Framework"
