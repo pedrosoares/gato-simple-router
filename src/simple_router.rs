@@ -4,11 +4,11 @@ use std::collections::HashMap;
 struct Endpoint {
     uri: String,
     method: String,
-    handler: &'static dyn Fn(&Request) -> Response
+    handler: &'static dyn Fn(&mut Request) -> Response
 }
 
 impl Endpoint {
-    pub fn new(uri: &str, method: &str, handler: &'static dyn Fn(&Request) -> Response) -> Self {
+    pub fn new(uri: &str, method: &str, handler: &'static dyn Fn(&mut Request) -> Response) -> Self {
         return Endpoint { uri: uri.to_string(), handler, method: method.to_string() };
     }
 }
@@ -19,27 +19,27 @@ impl SimpleRouter {
     pub fn new() -> Self {
         return SimpleRouter { }
     }
-    pub fn get(endpoint: &str, f: &'static dyn Fn(&Request) -> Response) {
+    pub fn get(endpoint: &str, f: &'static dyn Fn(&mut Request) -> Response) {
         unsafe {
             ENDPOINTS.push(Endpoint::new(endpoint, "GET", f));
         }
     }
-    pub fn post(endpoint: &str, f: &'static dyn Fn(&Request) -> Response) {
+    pub fn post(endpoint: &str, f: &'static dyn Fn(&mut Request) -> Response) {
         unsafe {
             ENDPOINTS.push(Endpoint::new(endpoint, "POST", f));
         }
     }
-    pub fn put(endpoint: &str, f: &'static dyn Fn(&Request) -> Response) {
+    pub fn put(endpoint: &str, f: &'static dyn Fn(&mut Request) -> Response) {
         unsafe {
             ENDPOINTS.push(Endpoint::new(endpoint, "PUT", f));
         }
     }
-    pub fn patch(endpoint: &str, f: &'static dyn Fn(&Request) -> Response) {
+    pub fn patch(endpoint: &str, f: &'static dyn Fn(&mut Request) -> Response) {
         unsafe {
             ENDPOINTS.push(Endpoint::new(endpoint, "PATCH", f));
         }
     }
-    pub fn delete(endpoint: &str, f: &'static dyn Fn(&Request) -> Response) {
+    pub fn delete(endpoint: &str, f: &'static dyn Fn(&mut Request) -> Response) {
         unsafe {
             ENDPOINTS.push(Endpoint::new(endpoint, "DELETE", f));
         }
