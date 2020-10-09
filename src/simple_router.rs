@@ -102,11 +102,9 @@ impl Router for SimpleRouter {
             }
         }
 
-        let mut response = Response::json(serde_json::json!({
+        return Response::new().status(404).json(serde_json::json!({
             "error": "Page Not Found"
         }));
-        response.set_code(404);
-        return response;
     }
 }
 
