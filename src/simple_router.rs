@@ -96,9 +96,14 @@ impl Router for SimpleRouter {
             let did_match_route : bool = self.match_route_name(
                 endpoint.uri.as_str(), request.get_uri().as_str(), request_builder
             );
-            if did_match_route && endpoint.method == request.get_method() {
-                let request = request_builder.get_request();
-                return (endpoint.handler)(&request);
+            if did_match_route {
+                let req_method = request.get_method();
+                if endpoint.method == req_method {
+                    let request = request_builder.get_request();
+                    return (endpoint.handler)(&request);
+                } else if req_method == "OPTIONS" || req_method == "HEAD" {
+                    return Response::new().status(200).raw("");
+                }
             }
         }
 
