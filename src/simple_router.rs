@@ -52,7 +52,14 @@ impl SimpleRouter {
             return true;
         }
         let mut params : HashMap<String, String> = HashMap::new();
-        let uri_piece : Vec<&str> = uri.split("/").collect();
+        
+        // Remove QueryString
+        let p: Vec<&str> = uri.split("?").collect();
+        // Get URL Folders
+        let uri_piece : Vec<&str> = p[0].split("/").collect();
+        // Get URL QueryString Variables
+        let url_query: Vec<&str> = if p.len() > 1 { p[1].split("&").collect() } else { vec!() };
+        // Get ROUTER Folders
         let route_piece : Vec<&str> = router.split("/").collect();
         let limit = uri_piece.len();
         for i in 0..limit {
@@ -75,6 +82,15 @@ impl SimpleRouter {
 
         if uri_piece.len() == route_piece.len() {
             request_builder.add_params(params);
+            let querystring: HashMap<_, _> = url_query.iter().map(|&params| {
+                let p: Vec<_> = params.split("=").collect();
+                return if p.len() == 2 {
+                    (p[0].to_string(), p[1].to_string())
+                } else {
+                    (p[0].to_string(), String::new())
+                }
+            }).collect();
+            request_builder.add_querystring(querystring);
             return true;
         }
 
