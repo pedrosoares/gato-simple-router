@@ -19,6 +19,21 @@ impl SimpleRouter {
     pub fn new() -> Self {
         return SimpleRouter { }
     }
+    pub fn any(endpoint: &str, f: &'static dyn Fn(&Request) -> Response) {
+        unsafe {
+            ENDPOINTS.push(Endpoint::new(endpoint, "ANY", f));
+        }
+    }
+    pub fn options(endpoint: &str, f: &'static dyn Fn(&Request) -> Response) {
+        unsafe {
+            ENDPOINTS.push(Endpoint::new(endpoint, "OPTIONS", f));
+        }
+    }
+    pub fn head(endpoint: &str, f: &'static dyn Fn(&Request) -> Response) {
+        unsafe {
+            ENDPOINTS.push(Endpoint::new(endpoint, "HEAD", f));
+        }
+    }
     pub fn get(endpoint: &str, f: &'static dyn Fn(&Request) -> Response) {
         unsafe {
             ENDPOINTS.push(Endpoint::new(endpoint, "GET", f));
@@ -48,7 +63,7 @@ impl SimpleRouter {
 
 impl SimpleRouter {
     fn match_route_name(&self, uri: &str, router: &str, request_builder: &mut RequestBuilder) -> bool {
-        if uri == router {
+        if uri == "*" || uri == router {
             return true;
         }
         let mut params : HashMap<String, String> = HashMap::new();
@@ -118,7 +133,7 @@ impl Router for SimpleRouter {
             );
             if did_match_route {
                 let req_method = request.get_method();
-                if endpoint.method == req_method {
+                if endpoint.method == "ANY" || endpoint.method == req_method {
                     let request = request_builder.get_request();
                     return (endpoint.handler)(&request);
                 } else if req_method == "OPTIONS" || req_method == "HEAD" {
